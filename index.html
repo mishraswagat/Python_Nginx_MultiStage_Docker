@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python + Nginx Docker App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 { 
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .tech-item {
+            background: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .endpoints {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+        .endpoint {
+            margin: 0.5rem 0;
+            font-family: monospace;
+        }
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🐍🐳</div>
+        <h1>Python + Nginx Docker App</h1>
+        <p>This is a multi-stage Docker container serving this page via Nginx with a Python backend API.</p>
+        
+        <div class="tech-stack">
+            <span class="tech-item">🐍 Python</span>
+            <span class="tech-item">🌐 Nginx</span>
+            <span class="tech-item">🐳 Docker</span>
+            <span class="tech-item">🚀 Multi-Stage</span>
+        </div>
+
+        <div class="endpoints">
+            <h3>📡 Available Endpoints:</h3>
+            <div class="endpoint"><a href="/">/</a> - This HTML page (served by Nginx)</div>
+            <div class="endpoint"><a href="/api">/api</a> - Python API endpoint</div>
+            <div class="endpoint"><a href="/api/data">/api/data</a> - Sample data API</div>
+            <div class="endpoint"><a href="/health">/health</a> - Health check</div>
+        </div>
+
+        <p>✨ <strong>Multi-stage build advantage:</strong> Smaller image size, better security, optimized layers</p>
+    </div>
+</body>
+</html>
