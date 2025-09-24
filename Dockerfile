@@ -10,7 +10,7 @@ WORKDIR /app
 COPY requirements.txt . 
 
 #installing the external packages
-RUN pip install --user --no-cache-dir -r requirement.txt 
+RUN pip install --user --no-cache-dir -r requirements.txt 
 
 # --user used to install packages at /root/.local instead of the default /usr/local/lib/python3.9/site-packages/
 # --no-cache-dir used to leave cache files,else it will bloat the image later. normally it keeps the cache files at /root/.cache/pip/
