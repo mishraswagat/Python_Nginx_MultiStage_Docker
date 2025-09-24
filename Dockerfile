@@ -34,7 +34,7 @@ COPY --from=builder /root/.local/ /root/.local
 
 WORKDIR /app
 
-copy app.py .
+COPY app.py .
 
 # Set new Environment 
 ENV PATH=/root/.local/bin:$PATH
