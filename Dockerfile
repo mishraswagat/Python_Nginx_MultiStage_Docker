@@ -43,5 +43,5 @@ ENV PATH=/root/.local/bin:$PATH
 EXPOSE 80
 
 #Starting both services
-CMD nginx && python app.py 
+CMD nginx -g "daemon off;" & python app.py
 
