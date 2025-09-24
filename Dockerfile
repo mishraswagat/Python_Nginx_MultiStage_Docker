@@ -1,10 +1,13 @@
 # Stage 1 : Python Dependencies
 
-FROM python:3.9-slim as builder  #used the name builder to call this later.
+FROM python:3.9-slim as builder  
+#used the name builder to call this later.
 
-WORKDIR /app # Setting default work directory as /app ,later we will copy files to this location.
+# Setting default work directory as /app ,later we will copy files to this location.
+WORKDIR /app 
 
-COPY requirement.txt #This file contains external python package info that needs to be installed.
+#This file contains external python package info that needs to be installed.
+COPY requirements.txt . 
 
 #installing the external packages
 RUN pip install --user --no-cache-dir -r requirement.txt 
