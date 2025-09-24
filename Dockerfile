@@ -7,7 +7,7 @@ FROM python:3.9-slim as builder
 WORKDIR /app 
 
 #This file contains external python package info that needs to be installed.
-COPY requirements.txt . 
+ADD requirements.txt . 
 
 #installing the external packages
 RUN pip install --user --no-cache-dir -r requirements.txt 
