@@ -1,47 +1,32 @@
-# Stage 1 : Python Dependencies
-
-FROM python:3.9-slim as builder  
-#used the name builder to call this later.
-
-# Setting default work directory as /app ,later we will copy files to this location.
-WORKDIR /app 
-
-#This file contains external python package info that needs to be installed.
-ADD requirements.txt . 
-
-#installing the external packages
-RUN pip install --user --no-cache-dir -r requirements.txt 
-
-# --user used to install packages at /root/.local instead of the default /usr/local/lib/python3.9/site-packages/
-# --no-cache-dir used to leave cache files,else it will bloat the image later. normally it keeps the cache files at /root/.cache/pip/
-
-# Stage 2 : Building Final Image
+FROM python:3.9-slim as builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
 FROM python:3.9-slim
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y nginx curl --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install nginx 
-
-RUN apt-get update && apt-get install -y nginx
-
-#Copying nginx static files 
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY index.html /usr/share/nginx/html
-
-# Copy Python dependencies from builder stage
-
+# Copy files
 COPY --from=builder /root/.local/ /root/.local
-
+COPY nginx.conf /etc/nginx/sites-available/default
+COPY index.html /usr/share/nginx/html/
 WORKDIR /app
-
 COPY app.py .
+COPY start.sh .
 
-# Set new Environment 
+# Make start script executable
+RUN chmod +x start.sh && \
+    rm /etc/nginx/sites-enabled/default && \
+    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+
 ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONUNBUFFERED=1
 
-#Exposing Port
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
 EXPOSE 80
-
-#Starting both services
-CMD nginx -g "daemon off;" & python app.py
-
+CMD ["./start.sh"]
