@@ -41,11 +41,11 @@ Get inside the directory name ** Python_Nginx_MultiStage_Docker **
 ```bash
 docker build -t python-nginx-app .
 ```
-** Here i named the image as python-nginx-app , you can use your custom name **
+**Here i named the image as python-nginx-app , you can use your custom name**
 
 ***OR***
 
-** Build with version tag **
+**Build with version tag**
 ```bash
 docker build -t python-nginx-app:v1.0 .
 ```
@@ -54,7 +54,7 @@ docker build -t python-nginx-app:v1.0 .
 ```bash
 docker run -d -p 80:80 --name python-nginx python-nginx-app
 ```
-** Here i named the container as python-nginx , you can use your custom name **
+**Here i named the container as python-nginx , you can use your custom name**
 
 ### Step 4: Access the Application
 
