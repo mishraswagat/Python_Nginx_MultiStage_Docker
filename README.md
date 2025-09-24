@@ -34,7 +34,7 @@ Pull this repository to your machine using
 git clone https://github.com/mishraswagat/Python_Nginx_MultiStage_Docker.git
 ```
 
-Get inside the directory name ** Python_Nginx_MultiStage_Docker **
+Get inside the directory name **Python_Nginx_MultiStage_Docker**
 
 ### Step 2: Build the Docker Image
 
@@ -83,7 +83,7 @@ docker rm python-nginx
 
 ### Extras
 
-** Get inside the container to check something. Example : NGINX Log
+**Get inside the container to check something. Example : NGINX Log**
 ```bash
 docker exec -it python-nginx /bin/bash
 ```
