@@ -1,81 +1,83 @@
-# 📊 Step-by-Step Guide: Send Docker Container Logs to AWS CloudWatch 
+# 📊 Step-by-Step Guide: Send Docker Container Logs to AWS CloudWatch  
 
-## Mount volumes for Nginx logs and Python logs so CloudWatch Agent on EC2 can read them.
+Easily ship your Docker container logs directly to **AWS CloudWatch** without installing any extra agent. 🚀  
 
-## Configure CloudWatch Agent to watch Docker JSON logs and those mounted paths.
+---
 
-### 1. Run your container with log volumes
+## 📝 1. Create a Log Group in CloudWatch  
+1. Go to **AWS CloudWatch**  
+2. On the left menu → **Log Groups**  
+3. Click ➕ **Create Log Group**  
+4. Enter a name (e.g., `nginx-logs`)  
+5. Set:
+   - **Retention**: 1 Day  
+   - **Log Class**: Standard  
+6. Click **Create** ✅  
 
- -- As our image name is python-nginx-app 
- We need to mount volume
- ```bash
- docker run -d  --name python-nginx -p 80:80 -v /var/log/nginx:/var/log/nginx -v /home/ec2-user/app-logs:/app/logs python-nginx-app
- ```
- 
-  - /var/log/nginx on the EC2 host will now have the nginx logs from the container.
+---
 
-  - /home/ec2-user/app-logs on the EC2 host will now have your Python logs.
-  
- ### 2. Install CloudWatch Agent on EC2
- ```bash
- sudo yum install -y amazon-cloudwatch-agent 
- ```
- ### 3. Create CloudWatch Agent Config
-  -- You can run the wizard or create config manually.
-  ***OR***
-  Here’s a manual config file /opt/aws/amazon-cloudwatch-agent/bin/config.json:
-  ```bash
-  {
-  "logs": {
-    "logs_collected": {
-      "files": {
-        "collect_list": [
-          {
-            "file_path": "/var/lib/docker/containers/*/*.log",
-            "log_group_name": "docker-logs",
-            "log_stream_name": "{instance_id}"
-          },
-          {
-            "file_path": "/var/log/nginx/access.log",
-            "log_group_name": "nginx-access",
-            "log_stream_name": "{instance_id}"
-          },
-          {
-            "file_path": "/var/log/nginx/error.log",
-            "log_group_name": "nginx-error",
-            "log_stream_name": "{instance_id}"
-          },
-          {
-            "file_path": "/home/ec2-user/app-logs/app.log",
-            "log_group_name": "python-app",
-            "log_stream_name": "{instance_id}"
-          }
-        ]
-      }
-    }
-  }
-}
-```
+## 👤 2. Create an IAM User  
+1. Go to **AWS IAM**  
+2. On the left menu → **Users** → **Create User**  
+3. Enter username: `ec2` → Next  
+4. Select **Attach Policies Directly**  
+5. Choose ✅ `CloudWatchFullAccess` & `CloudWatchFullAccessV2`  
+6. Validate & create user  
+7. Generate an **Access Key** 🔑 (needed for CLI usage on the server where Docker will run).  
 
-### 4. Start CloudWatch Agent
+---
+
+## 🔑 3. Create an IAM Role  
+1. Go to **AWS IAM** → **Roles** → **Create Role**  
+2. Select **AWS Services** as Trusted Entity  
+3. Choose **EC2** from dropdown → Next  
+4. Attach ✅ `CloudWatchFullAccess` & `CloudWatchFullAccessV2`  
+5. Enter role name: `EC2-Nginx` → Create Role 🎉  
+
+---
+
+## ⚡ 4. Attach Role to EC2 Instance  
+1. Go to **AWS EC2**  
+2. Select your instance  
+3. Click **Actions → Security → Modify IAM Role**  
+4. Select role `EC2-Nginx` → Save / Update IAM Role  
+
+---
+
+## 📡 5. Monitor Docker Logs in CloudWatch  
+- Use the provided `deploy.sh` script (already included in this repo).  
+- The script runs the container with CloudWatch logging:  
+
 ```bash
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json \
-  -s
+docker run \
+  --log-driver=awslogs \
+  --log-opt awslogs-group=nginx-logs \
+  --log-opt awslogs-region=us-east-1
 ```
-Check status:
+👉 This ships logs directly to CloudWatch Logs via Docker’s native AWS log driver — no agents needed!
+
+Once the container is running:
+
+Go to AWS CloudWatch → Log Groups → nginx-logs
+
+Open Log Streams to view real-time container logs 📖✨
+
+✅ Summary
+
+With just IAM setup + Docker’s log driver, your container logs are now available in AWS CloudWatch for monitoring & analysis. 🔥
+
+
+## 🖼️ Architecture Diagram  
+
+```ascii
++------------------+        docker run with        +------------------+
+|                  |   --log-driver=awslogs        |                  |
+|  Docker Container+------------------------------>+  AWS CloudWatch  |
+|   (Nginx / App)  |   --log-opt awslogs-group     |   (Log Groups &  |
+|                  |   --log-opt awslogs-region    |    Log Streams)  |
++------------------+                               +------------------+
+         |
+         | stdout / stderr
+         v
+   Application Logs
 ```
-sudo systemctl status amazon-cloudwatch-agent
-```
-
-### 5. Verify in AWS Console
-
- - Open CloudWatch → Log groups
-
- - You’ll see:
-
-   - docker-logs → raw container logs (stdout/stderr)
-
-   - nginx-access, nginx-error → Nginx logs  
-
-   - python-app → your Python logs
-

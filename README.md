@@ -19,7 +19,9 @@ python-nginx-docker/
 ├── app.py                 # Python web application
 ├── nginx.conf            # Nginx configuration
 ├── index.html            # Static HTML page
-└── README.md             # This file
+├── README.md             # This file
+├── start.sh			  # This will start the services inside Container
+├── deploy.sh 			  #Written the script to avoid writing docker commands repeatedly.
 ```
 
 ## 🚀 Quick Start
@@ -55,6 +57,8 @@ docker build -t python-nginx-app:v1.0 .
 docker run -d -p 80:80 --name python-nginx python-nginx-app
 ```
 **Here i named the container as python-nginx , you can use your custom name**
+
+***There is a deploy.sh which will help you to restart the container**
 
 ### Step 4: Access the Application
 

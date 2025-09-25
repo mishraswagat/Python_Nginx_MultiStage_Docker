@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CONTAINER_NAME=myapp
-IMAGE_NAME=myrepo/myapp:latest
+CONTAINER_NAME=python-nginx
+IMAGE_NAME=python-nginx-app
 
 echo "Stopping and removing container if it exists..."
 docker rm -f $CONTAINER_NAME 2>/dev/null || true
